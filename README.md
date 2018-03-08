@@ -1,9 +1,6 @@
-# ferryman
-Networking Remote Procedure Call service
+# Ferryman
 
+Server appliction for BMTP.
 
-Features
+**BMTP** - Black Matter Transport Protocol, remake of FTP. 
 
-1. Neighbor Discovery Protocol, NDP
-2. Transport Layer Security, TLS
-3. Custom File Transfer Protocol, FTP -- Black Matter Transfer Protocol, BMTP
