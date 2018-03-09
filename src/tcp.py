@@ -3,6 +3,8 @@ from threading import Thread
 
 MAX_BYTES = 65535
 
+
+# PI - Protocol Interpreter
 def dispatcher(host, port, pi):
     dispatcher_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -20,16 +22,25 @@ def dispatcher(host, port, pi):
         client_socket, socketname = dispatcher_socket.accept()
         print('Dispatcher: Connection accepted -- {}'.format(socketname))
 
-        adapter = TCP_adapter(client_socket)
-        Thread(target=pi, args=(adapter,)).start()
+        adapter = NetworkAdapter(client_socket)
+        wrapped_pi = network_wrapper(pi)
+        Thread(target=wrapped_pi, args=(adapter,)).start()
 
 
-class TCP_adapter:
+# Handle exit from PI, and close socket
+def network_wrapper(pi):
+    def wrapped(network_adapter):
+        pi(network_adapter)
+        network_adapter.close()
+    return wrapped
+
+
+class NetworkAdapter:
     def __init__(self, client_socket):
         self.socket = client_socket
 
     def read(self):
-        raw_data, _ =  self.socket.recvfrom(MAX_BYTES)
+        raw_data, _ = self.socket.recvfrom(MAX_BYTES)
         return raw_data.decode('ascii')
 
     def send(self, message):
